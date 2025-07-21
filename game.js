@@ -1475,9 +1475,10 @@ function resetGame() {
   }
   setScore(0);
   gameoverOverlay.classList.add('hidden');
-  startOverlay.classList.remove('hidden');
+  startOverlay.classList.add('hidden');
   randomCouplePosition();
-  gameState = 'start';
+  gameState = 'playing';
+  gameStartTime = Date.now() / 1000; // Set start time for retry
   lightX = CANVAS_WIDTH / 2;
   lightY = CANVAS_HEIGHT / 2;
   flashAlpha = 0;
