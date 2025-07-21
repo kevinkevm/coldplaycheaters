@@ -220,6 +220,76 @@ body {
   color: #ff1744;
 }
 
+/* Start Game Overlay */
+#start-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+#start-overlay.hidden {
+  display: none;
+}
+
+#start-content {
+  background: rgba(20, 20, 30, 0.95);
+  border: 2px solid #ff1744;
+  color: #fff;
+  padding: 2rem;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(255, 23, 68, 0.4);
+  max-width: 400px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+#start-content h1 {
+  font-size: clamp(1.5rem, 5vw, 2.5rem);
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #ff1744;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+#start-content p {
+  font-size: clamp(0.8rem, 2.5vw, 1rem);
+  margin-bottom: 1rem;
+  line-height: 1.5;
+  color: #e0e0e0;
+  font-weight: 400;
+}
+
+#start-btn {
+  font-size: clamp(1rem, 3vw, 1.2rem);
+  font-weight: 600;
+  padding: 16px 32px;
+  border: 2px solid #ff1744;
+  border-radius: 8px;
+  background: #ff1744;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  touch-action: manipulation;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 1px;
+  margin-top: 0.5rem;
+}
+
+#start-btn:hover {
+  background: transparent;
+  color: #ff1744;
+}
+
+#start-btn:active {
+  transform: scale(0.98);
+}
+
 /* Create a container for the canvas and button */
 .game-container {
   position: relative;

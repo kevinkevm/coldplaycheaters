@@ -14,12 +14,12 @@
     <canvas id="game-canvas"></canvas>
     
     <!-- Audio element for camera shutter sound -->
-    <audio id="camera-shutter" preload="auto">
+    <audio id="camera-shutter" preload="auto" playsinline>
       <source src="camera-shutter.mp3" type="audio/mpeg">
     </audio>
     
     <!-- Audio element for game end sound -->
-    <audio id="game-end-sound" preload="auto">
+    <audio id="game-end-sound" preload="auto" playsinline>
       <source src="soundbite.mp3" type="audio/mpeg">
     </audio>
     
@@ -30,11 +30,22 @@
       </button>
     </div>
     
+    <!-- Start Game Overlay -->
+    <div id="start-overlay">
+      <div id="start-content">
+        <h1>COLDPLAY CHEATING</h1>
+        <p>Hold SPACE or HUG BUTTON to hug your coworker</p>
+        <p>Release when the Kiss Cam spotlight finds you!</p>
+        <p>Don't get caught hugging on camera!</p>
+        <button id="start-btn">START GAME</button>
+      </div>
+    </div>
+    
     <!-- Game Over Overlay positioned over the game -->
     <div id="gameover-overlay" class="hidden">
       <div id="gameover-content">
         <div id="final-score"></div>
-        <div id="headline">Oops! Well at least you already know who you'll be with after the divorce! <br> <br> coldplaycheaters.com
+        <div id="headline">Oops! Well at least you already know who you'll be with after the divorce! <br> <br> coldplaycheating.com
         </div>
         <button id="retry-btn">RETRY</button>
       </div>

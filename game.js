@@ -33,7 +33,7 @@ const talkingImg = new Image();
 talkingImg.src = 'talking.png';
 
 // --- Game State ---
-let gameState = 'playing'; // 'playing' | 'flashing' | 'cooldown' | 'gameover'
+let gameState = 'start'; // 'start' | 'playing' | 'flashing' | 'cooldown' | 'gameover'
 let score = 0;
 let highScore = 0;
 let isSpaceDown = false;
@@ -110,7 +110,10 @@ let lightX = CANVAS_WIDTH / 2;
 let lightY = CANVAS_HEIGHT / 2;
 let lightTargetX = lightX;
 let lightTargetY = lightY;
-const LIGHT_SPEED = 2.0; // Fixed speed, no increase
+// Device detection for different speeds
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                 (navigator.maxTouchPoints && navigator.maxTouchPoints > 1);
+const LIGHT_SPEED = isMobile ? 330.0 : 280.0; // Pixels per second (mobile gets faster speed)
 let lightPathTimer = 0;
 let lightPathDuration = 0;
 
@@ -431,6 +434,8 @@ function pathCrossesKissCam(x1, y1, x2, y2) {
 
 // --- UI Elements ---
 const scoreEl = document.getElementById('score');
+const startOverlay = document.getElementById('start-overlay');
+const startBtn = document.getElementById('start-btn');
 const gameoverOverlay = document.getElementById('gameover-overlay');
 const finalScoreEl = document.getElementById('final-score');
 const retryBtn = document.getElementById('retry-btn');
@@ -438,26 +443,70 @@ const hugButton = document.getElementById('hug-button');
 const cameraShutterSound = document.getElementById('camera-shutter');
 const gameEndSound = document.getElementById('game-end-sound');
 
+// --- Audio Management ---
+let audioInitialized = false;
+
+function initializeAudio() {
+  if (audioInitialized) return;
+  
+  // Create a promise to initialize audio after user interaction
+  const sounds = [cameraShutterSound, gameEndSound];
+  
+  sounds.forEach(sound => {
+    if (sound) {
+      // Set initial properties
+      sound.volume = 0.01; // Very quiet
+      sound.muted = false;
+      
+      // Try to load and play a tiny bit to unlock audio
+      sound.play().then(() => {
+        sound.pause();
+        sound.currentTime = 0;
+        console.log('Audio unlocked for', sound.id);
+      }).catch(e => {
+        console.log('Audio unlock failed for', sound.id, e);
+      });
+    }
+  });
+  
+  audioInitialized = true;
+  console.log('Audio system initialized');
+}
+
 // --- Audio Helper ---
 function playShutterSound() {
-  if (cameraShutterSound) {
-    cameraShutterSound.currentTime = 2.0; // Start at 2.0 seconds where shutter sound begins
-    cameraShutterSound.volume = 0.4; // Set volume to 60%
-    cameraShutterSound.play().catch(e => {
-      // Ignore audio play errors (e.g., user hasn't interacted with page yet)
-      console.log('Audio play failed:', e);
-    });
+  if (!audioInitialized) {
+    initializeAudio();
+  }
+  
+  if (cameraShutterSound && cameraShutterSound.readyState >= 2) {
+    try {
+      cameraShutterSound.currentTime = 2.0; // Start at 2.0 seconds where shutter sound begins
+      cameraShutterSound.volume = 0.4; // Set volume to 40%
+      cameraShutterSound.play().catch(e => {
+        console.log('Shutter audio play failed:', e);
+      });
+    } catch (e) {
+      console.log('Shutter audio error:', e);
+    }
   }
 }
 
 function playGameEndSound() {
-  if (gameEndSound) {
-    gameEndSound.currentTime = 0; // Start from beginning
-    gameEndSound.volume = 0.7; // Set volume to 70%
-    gameEndSound.play().catch(e => {
-      // Ignore audio play errors (e.g., user hasn't interacted with page yet)
-      console.log('Game end audio play failed:', e);
-    });
+  if (!audioInitialized) {
+    initializeAudio();
+  }
+  
+  if (gameEndSound && gameEndSound.readyState >= 2) {
+    try {
+      gameEndSound.currentTime = 0; // Start from beginning
+      gameEndSound.volume = 0.7; // Set volume to 70%
+      gameEndSound.play().catch(e => {
+        console.log('Game end audio play failed:', e);
+      });
+    } catch (e) {
+      console.log('Game end audio error:', e);
+    }
   }
 }
 
@@ -760,9 +809,10 @@ function updateMovement(dt) {
   const dy = lightTargetY - lightY;
   const dist = Math.sqrt(dx * dx + dy * dy);
   
-  if (dist > LIGHT_SPEED) {
-    lightX += (dx / dist) * LIGHT_SPEED;
-    lightY += (dy / dist) * LIGHT_SPEED;
+  const frameSpeed = LIGHT_SPEED * dt;
+  if (dist > frameSpeed) {
+    lightX += (dx / dist) * frameSpeed;
+    lightY += (dy / dist) * frameSpeed;
   } else {
     lightX = lightTargetX;
     lightY = lightTargetY;
@@ -814,9 +864,10 @@ function updateMovement2(dt) {
   const dy = light2TargetY - light2Y;
   const dist = Math.sqrt(dx * dx + dy * dy);
   
-  if (dist > LIGHT_SPEED) {
-    light2X += (dx / dist) * LIGHT_SPEED;
-    light2Y += (dy / dist) * LIGHT_SPEED;
+  const frameSpeed = LIGHT_SPEED * dt;
+  if (dist > frameSpeed) {
+    light2X += (dx / dist) * frameSpeed;
+    light2Y += (dy / dist) * frameSpeed;
   } else {
     light2X = light2TargetX;
     light2Y = light2TargetY;
@@ -866,9 +917,10 @@ function updateMovement3(dt) {
   const dy = light3TargetY - light3Y;
   const dist = Math.sqrt(dx * dx + dy * dy);
   
-  if (dist > LIGHT_SPEED) {
-    light3X += (dx / dist) * LIGHT_SPEED;
-    light3Y += (dy / dist) * LIGHT_SPEED;
+  const frameSpeed = LIGHT_SPEED * dt;
+  if (dist > frameSpeed) {
+    light3X += (dx / dist) * frameSpeed;
+    light3Y += (dy / dist) * frameSpeed;
   } else {
     light3X = light3TargetX;
     light3Y = light3TargetY;
@@ -918,9 +970,10 @@ function updateMovement4(dt) {
   const dy = light4TargetY - light4Y;
   const dist = Math.sqrt(dx * dx + dy * dy);
   
-  if (dist > LIGHT_SPEED) {
-    light4X += (dx / dist) * LIGHT_SPEED;
-    light4Y += (dy / dist) * LIGHT_SPEED;
+  const frameSpeed = LIGHT_SPEED * dt;
+  if (dist > frameSpeed) {
+    light4X += (dx / dist) * frameSpeed;
+    light4Y += (dy / dist) * frameSpeed;
   } else {
     light4X = light4TargetX;
     light4Y = light4TargetY;
@@ -970,9 +1023,10 @@ function updateMovement5(dt) {
   const dy = light5TargetY - light5Y;
   const dist = Math.sqrt(dx * dx + dy * dy);
   
-  if (dist > LIGHT_SPEED) {
-    light5X += (dx / dist) * LIGHT_SPEED;
-    light5Y += (dy / dist) * LIGHT_SPEED;
+  const frameSpeed = LIGHT_SPEED * dt;
+  if (dist > frameSpeed) {
+    light5X += (dx / dist) * frameSpeed;
+    light5Y += (dy / dist) * frameSpeed;
   } else {
     light5X = light5TargetX;
     light5Y = light5TargetY;
@@ -1021,6 +1075,16 @@ function gameLoop(ts) {
   if (!lastTimestamp) lastTimestamp = ts;
   const dt = (ts - lastTimestamp) / 1000;
   lastTimestamp = ts;
+
+  // If in start state, just show start screen
+  if (gameState === 'start') {
+    ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    if (bgImg.complete) {
+      ctx.drawImage(bgImg, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    }
+    requestAnimationFrame(gameLoop);
+    return;
+  }
 
   // Update isSpaceDown based on current input states (keyboard or mobile)
   // Only update when not frozen on camera, otherwise maintain frozen state
@@ -1369,6 +1433,13 @@ function gameLoop(ts) {
 }
 
 // --- Game Logic ---
+function startGame() {
+  gameState = 'playing';
+  startOverlay.classList.add('hidden');
+  gameStartTime = Date.now() / 1000;
+  pickNewLightTarget();
+}
+
 function startRound() {
   gameState = 'playing';
   // Uncrouch couple is handled by the gameLoop drawing
@@ -1399,10 +1470,14 @@ function endGame() {
 }
 
 function resetGame() {
+  if (!audioInitialized) {
+    initializeAudio();
+  }
   setScore(0);
   gameoverOverlay.classList.add('hidden');
+  startOverlay.classList.remove('hidden');
   randomCouplePosition();
-  gameState = 'playing';
+  gameState = 'start';
   lightX = CANVAS_WIDTH / 2;
   lightY = CANVAS_HEIGHT / 2;
   flashAlpha = 0;
@@ -1479,9 +1554,19 @@ let isKeyboardSpaceDown = false;
 function handleKey(e) {
   if (e.code === 'Space') {
     e.preventDefault();
-    isKeyboardSpaceDown = true;
+    if (!audioInitialized) {
+      initializeAudio();
+    }
+    if (gameState === 'start') {
+      startGame();
+    } else {
+      isKeyboardSpaceDown = true;
+    }
   } else if (e.key === 'Enter' && gameState === 'gameover') {
     e.preventDefault();
+    if (!audioInitialized) {
+      initializeAudio();
+    }
     resetGame();
   }
 }
@@ -1496,6 +1581,9 @@ function handleKeyUp(e) {
 // Mobile touch handlers
 function handleHugStart(e) {
   e.preventDefault();
+  if (!audioInitialized) {
+    initializeAudio();
+  }
   isMobileHugPressed = true;
   hugButton.classList.add('pressed');
 }
@@ -1512,6 +1600,7 @@ function preventContextMenu(e) {
   return false;
 }
 
+startBtn.addEventListener('click', startGame);
 retryBtn.addEventListener('click', resetGame);
 document.addEventListener('keydown', handleKey);
 document.addEventListener('keyup', handleKeyUp);
@@ -1539,6 +1628,22 @@ document.addEventListener('touchend', function (event) {
   lastTouchEnd = now;
 }, false);
 
+// Universal audio initialization fallback
+function universalAudioInit() {
+  if (!audioInitialized) {
+    initializeAudio();
+    // Remove the event listeners after first use
+    document.removeEventListener('touchstart', universalAudioInit);
+    document.removeEventListener('touchend', universalAudioInit);
+    document.removeEventListener('click', universalAudioInit);
+  }
+}
+
+// Add universal event listeners for mobile audio unlock
+document.addEventListener('touchstart', universalAudioInit, { passive: true });
+document.addEventListener('touchend', universalAudioInit, { passive: true });
+document.addEventListener('click', universalAudioInit);
+
 // Init
 document.addEventListener('DOMContentLoaded', () => {
   loadHighScore();
@@ -1546,5 +1651,5 @@ document.addEventListener('DOMContentLoaded', () => {
   randomCouplePosition();
   pickNewLightTarget();
   requestAnimationFrame(gameLoop);
-  startRound();
+  // Game starts on start screen instead of immediately playing
 }); 
