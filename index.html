@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Kiss Cam Dodge</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="score-ticker">SCORE: <span id="score">0</span></div>
+  
+  <!-- Wrap canvas and mobile controls in a container -->
+  <div class="game-container">
+    <canvas id="game-canvas"></canvas>
+    
+    <!-- Audio element for camera shutter sound -->
+    <audio id="camera-shutter" preload="auto">
+      <source src="camera-shutter.mp3" type="audio/mpeg">
+    </audio>
+    
+    <!-- Audio element for game end sound -->
+    <audio id="game-end-sound" preload="auto">
+      <source src="soundbite.mp3" type="audio/mpeg">
+    </audio>
+    
+    <!-- Mobile Controls positioned relative to canvas -->
+    <div id="mobile-controls">
+      <button id="hug-button">
+        <div class="button-text">HUG<br></div>
+      </button>
+    </div>
+    
+    <!-- Game Over Overlay positioned over the game -->
+    <div id="gameover-overlay" class="hidden">
+      <div id="gameover-content">
+        <div id="final-score"></div>
+        <div id="headline">Oops! Well at least you already know who you'll be with after the divorce! <br> <br> coldplaycheaters.com
+        </div>
+        <button id="retry-btn">RETRY</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Desktop Instructions - below the frame -->
+  <div id="desktop-instructions">
+    Hold <span class="key">SPACE</span> to hug • Release to avoid camera!
+  </div>
+  
+  <!-- Rules Section - scrollable below game -->
+  <section id="rules-section">
+    <h2>COLDPLAY CHEATERS</h2>
+    
+    <h3>OBJECTIVE</h3>
+    <p>Maximize your "Coworker Bonding" score by hugging as much as possible while avoiding getting caught on the Kiss Cam! Hold SPACE or the HUG BUTTON to hug your HR / CEO but lift off when the spotlight goes to you! As the concert goes on, more and more spotlights will be scanning around.</p>
+    <p><b>Don't get caught hugging on the Kiss Cam! If you're caught, the internet will track expose your unorthodox team building activities!</b></p>
+    
+    <li><strong>+1000 points/second</strong> while hugging</li>
+    <li><strong>-300 points/second</strong> while not hugging</li>
+    </ul>
+  </section>
+  
+  <script src="game.js"></script>
+</body>
+</html> 

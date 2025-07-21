@@ -1,0 +1,316 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&display=swap');
+
+body {
+  margin: 0;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  color: #fff;
+  min-height: 100vh;
+  touch-action: manipulation;
+  user-select: none;
+}
+
+#score-ticker {
+  position: fixed;
+  top: 15px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: clamp(1.2rem, 4vw, 2rem);
+  font-weight: 700;
+  z-index: 10;
+  pointer-events: none;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  letter-spacing: 2px;
+}
+
+/* Desktop Instructions - moved below frame */
+#desktop-instructions {
+  position: relative;
+  margin: 20px auto;
+  max-width: 600px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 16px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  display: block;
+}
+
+#desktop-instructions .key {
+  display: inline-block;
+  background: #fff;
+  color: #333;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 12px;
+  margin: 0 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  letter-spacing: 1px;
+}
+
+/* Rules Section - below the game */
+#rules-section {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+}
+
+#rules-section h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  background: linear-gradient(45deg, #ff1744, #ff6b6b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 2px;
+}
+
+#rules-section h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 1.5rem 0 0.8rem 0;
+  color: #ff6b6b;
+  letter-spacing: 1px;
+}
+
+#rules-section p, #rules-section li {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 0.8rem;
+  color: #e0e0e0;
+}
+
+#rules-section ul {
+  margin: 0.5rem 0 1rem 1rem;
+  padding: 0;
+}
+
+#rules-section .timeline {
+  background: rgba(255, 23, 68, 0.1);
+  border-left: 3px solid #ff1744;
+  padding: 1rem;
+  margin: 1rem 0;
+  border-radius: 0 8px 8px 0;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Hide desktop instructions on mobile */
+@media (max-width: 768px) {
+  #desktop-instructions {
+    display: none;
+  }
+  
+  #rules-section {
+    margin: 20px;
+    padding: 1.5rem;
+  }
+}
+
+#game-canvas {
+  display: block;
+  margin: 60px auto 0 auto;
+  background: #111;
+  border-radius: clamp(0.5rem, 2vw, 1rem);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  max-width: 95vw;
+  max-height: 70vh;
+  width: 900px;
+  height: 600px;
+  object-fit: contain;
+}
+
+/* Mobile-specific adjustments */
+@media (max-width: 768px) {
+  #game-canvas {
+    margin: 50px auto 0 auto;
+    max-height: 55vh;
+  }
+  
+  #score-ticker {
+    font-size: 1.5rem;
+    top: 5px;
+  }
+}
+
+@media (max-height: 600px) {
+  #game-canvas {
+    margin: 30px auto 0 auto;
+    max-height: 45vh;
+  }
+  
+  #score-ticker {
+    font-size: 1.2rem;
+    top: 2px;
+  }
+}
+
+#gameover-overlay {
+  position: absolute; /* Changed from fixed to absolute */
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.1); /* Much more translucent */
+  backdrop-filter: blur(1px); /* Very light blur so Kiss Cam is clearly visible */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000; /* Higher z-index to ensure it's on top */
+}
+
+#gameover-overlay.hidden {
+  display: none;
+}
+
+#gameover-content {
+  background: rgba(20, 20, 30, 0.85); /* Slightly more translucent */
+  border: 2px solid #ff1744;
+  color: #fff;
+  padding: clamp(0.8rem, 3vw, 1.2rem) clamp(1.2rem, 5vw, 2rem); /* Smaller padding */
+  border-radius: 8px; /* Smaller border radius */
+  text-align: center;
+  box-shadow: 0 6px 18px rgba(255, 23, 68, 0.3); /* Smaller shadow */
+  max-width: 320px; /* Smaller max width */
+  font-family: 'JetBrains Mono', monospace;
+  position: relative; /* Ensure it's positioned correctly within the overlay */
+}
+
+#final-score {
+  font-size: clamp(1.2rem, 4vw, 1.8rem);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #ff1744;
+  letter-spacing: 1px;
+}
+
+#headline {
+  font-size: clamp(0.9rem, 2.5vw, 1rem);
+  margin-bottom: 1.5rem;
+  line-height: 1.4;
+  color: #e0e0e0;
+  font-weight: 500;
+}
+
+#retry-btn {
+  font-size: clamp(0.9rem, 2.5vw, 1rem);
+  font-weight: 600;
+  padding: 12px 24px;
+  border: 2px solid #ff1744;
+  border-radius: 8px;
+  background: #ff1744;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  touch-action: manipulation;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 1px;
+}
+
+#retry-btn:hover {
+  background: transparent;
+  color: #ff1744;
+}
+
+/* Create a container for the canvas and button */
+.game-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Mobile hug button */
+#mobile-controls {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  background: transparent;
+  z-index: 50;
+  pointer-events: none;
+}
+
+#hug-button {
+  width: 120px;
+  height: 120px;
+  border-radius: 60px;
+  background: linear-gradient(145deg, #ff1744, #d50000);
+  border: 3px solid #fff;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 16px rgba(255, 23, 68, 0.4);
+  transition: all 0.1s ease;
+  cursor: pointer;
+  user-select: none;
+  pointer-events: auto;
+  touch-action: manipulation;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+#hug-button:active,
+#hug-button.pressed {
+  transform: scale(0.95);
+  background: linear-gradient(145deg, #d50000, #b71c1c);
+  box-shadow: 0 3px 10px rgba(255, 23, 68, 0.6);
+}
+
+#hug-button .button-text {
+  line-height: 1.2;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 1px;
+}
+
+/* Show mobile controls on touch devices */
+@media (hover: none) and (pointer: coarse) {
+  #mobile-controls {
+    display: flex;
+  }
+}
+
+/* Force show on small screens regardless of input method */
+@media (max-width: 768px) {
+  #mobile-controls {
+    display: flex;
+  }
+}
+
+/* Adjust for very small screens */
+@media (max-height: 500px) {
+  #hug-button {
+    width: 60px;
+    height: 60px;
+    border-radius: 30px;
+    font-size: 12px;
+  }
+}
+
+@media (max-height: 400px) {
+  #mobile-controls {
+    top: 15%; /* Adjust for extremely small screens */
+  }
+  
+  #hug-button {
+    width: 70px;
+    height: 70px;
+    border-radius: 35px;
+    font-size: 12px;
+  }
+} 
